@@ -4,23 +4,27 @@
  * This is a general purpose Gradle build.
  * Learn more about Gradle by exploring our samples at https://docs.gradle.org/7.2/samples
  */
+
 plugins {
   id 'com.github.ben-manes.versions' version '0.39.0'
   id 'application'
 }
-
-application {
-  mainClass = 'hexlet.code.App'
-}
-
+group = 'hexlet.code'
+version = '1.0-SNAPSHOT'
 compileJava {
   options.release = 16
+//  options.compilerArgs += ["-Aproject=${project.group}/${project.version}"]
 }
 
 repositories {
     mavenCentral()
 }
 
-group = 'hexlet.code'
-version = '1.0-SNAPSHOT'
+dependencies {
+    implementation 'info.picocli:picocli:4.6.1'
+}
+
+application {
+    mainClass = 'hexlet.code.App'
+}
 
