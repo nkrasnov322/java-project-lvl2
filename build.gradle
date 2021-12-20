@@ -8,6 +8,9 @@
 plugins {
   id 'com.github.ben-manes.versions' version '0.39.0'
   id 'application'
+  id 'checkstyle'
+  id 'jacoco'
+  id 'com.adarshr.test-logger' version '3.1.0'
 }
 group = 'hexlet.code'
 version = '1.0-SNAPSHOT'
@@ -20,12 +23,23 @@ repositories {
     mavenCentral()
 }
 
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport // report is always generated after tests run
+}
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+}
+
+
 dependencies {
     implementation 'info.picocli:picocli:4.6.2'
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.0'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.12.0'
     implementation 'com.fasterxml:jackson-xml-databind:0.6.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
 }
 
