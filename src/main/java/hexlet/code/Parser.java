@@ -13,7 +13,7 @@ public class Parser {
     private static ObjectMapper mapperForExtension(String fileExtension) throws Exception {
         if ("json".equals(fileExtension)) {
             return new ObjectMapper();
-        } else if ("yaml".equals(fileExtension)) {
+        } else if ("yaml".equals(fileExtension) || "yml".equals(fileExtension)) {
             return new ObjectMapper(new YAMLFactory());
         } else {
             throw new Exception();
