@@ -14,11 +14,32 @@ public class DifferTest {
     void generate() throws Exception {
         File file1 = getFileFromResource("file1.json");
         File file2 = getFileFromResource("file2.json");
-        File resultFile = getFileFromResource("json_result");
-        Path resultPath = Paths.get(resultFile.getAbsolutePath());
-        String resultValue = Files.readString(resultPath);
+        File stylishResultFile = getFileFromResource("stylish_result");
+        Path stylishResultPath = Paths.get(stylishResultFile.getAbsolutePath());
+        String stylishResultValue = Files.readString(stylishResultPath);
         String generate = Differ.generate(file1.getAbsolutePath(), file2.getAbsolutePath());
-        Assertions.assertEquals(resultValue, generate);
+        System.out.println(file1.getAbsolutePath());
+        Assertions.assertEquals(stylishResultValue, generate);
+
+        File plainResultFile = getFileFromResource("plain_result");
+        Path plainResultPath = Paths.get(plainResultFile.getAbsolutePath());
+        String plainResultValue = Files.readString(plainResultPath);
+        generate = Differ.generate(file1.getAbsolutePath(), file2.getAbsolutePath(), "plain");
+        Assertions.assertEquals(plainResultValue, generate);
+
+        File jsonResultFile = getFileFromResource("json_result");
+        Path jsonResultPath = Paths.get(jsonResultFile.getAbsolutePath());
+        String jsonResultValue = Files.readString(jsonResultPath);
+        generate = Differ.generate(file1.getAbsolutePath(), file2.getAbsolutePath(), "json");
+        System.out.println(generate);
+        Assertions.assertEquals(jsonResultValue, generate);
+
+        file1 = getFileFromResource("file1.yaml");
+        file2 = getFileFromResource("file2.yaml");
+        System.out.println(file1.getAbsolutePath());
+        generate = Differ.generate(file1.getAbsolutePath(), file2.getAbsolutePath());
+        Assertions.assertEquals(stylishResultValue, generate);
+
     }
     private File getFileFromResource(String fileName) throws Exception {
 

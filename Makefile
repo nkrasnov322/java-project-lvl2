@@ -8,4 +8,5 @@ lint:
 	./gradlew check
 build:
 	./gradlew clean build
+	./gradlew compileJava
 .PHONY: build
