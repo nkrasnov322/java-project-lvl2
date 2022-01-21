@@ -18,7 +18,6 @@ public class DifferTest {
         Path stylishResultPath = Paths.get(stylishResultFile.getAbsolutePath());
         String stylishResultValue = Files.readString(stylishResultPath);
         String generate = Differ.generate(file1.getAbsolutePath(), file2.getAbsolutePath());
-        System.out.println(file1.getAbsolutePath());
         Assertions.assertEquals(stylishResultValue, generate);
 
         File plainResultFile = getFileFromResource("plain_result");
@@ -31,12 +30,10 @@ public class DifferTest {
         Path jsonResultPath = Paths.get(jsonResultFile.getAbsolutePath());
         String jsonResultValue = Files.readString(jsonResultPath);
         generate = Differ.generate(file1.getAbsolutePath(), file2.getAbsolutePath(), "json");
-        System.out.println(generate);
         Assertions.assertEquals(jsonResultValue, generate);
 
         file1 = getFileFromResource("file1.yaml");
         file2 = getFileFromResource("file2.yaml");
-        System.out.println(file1.getAbsolutePath());
         generate = Differ.generate(file1.getAbsolutePath(), file2.getAbsolutePath());
         Assertions.assertEquals(stylishResultValue, generate);
 
