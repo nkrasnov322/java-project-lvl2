@@ -14,12 +14,13 @@ public final class Stylish extends Format {
     }
 
     private String diffRepresentation(String key, String operation, Object value) {
-        String result;
         if ("changed".equals(operation)) {
-            String removedDiff = diffRepresentation(key, "removed", ((List) value).get(0));
-            String addedDiff = diffRepresentation(key, "added", ((List) value).get(1));
+            List listValue = (List) value;
+            String removedDiff = diffRepresentation(key, "removed", listValue.get(0));
+            String addedDiff = diffRepresentation(key, "added", listValue.get(1));
             return  removedDiff + addedDiff;
         }
+        String result;
         if ("added".equals(operation)) {
             result = "+";
         } else if ("removed".equals(operation)) {
