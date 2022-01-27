@@ -13,19 +13,16 @@ public class Formatter {
         return formatter.format(diffResults);
     }
 
-    public static String format(Map<String, Map<String, Object>> diffResults) throws Exception {
-        return format(diffResults, "stylish");
-    }
-
     private static Format getFormatter(String format) {
-        if (format == null || "".equals(format) || "stylish".equals(format)) {
-            return new Stylish();
-        } else if ("plain".equals(format)) {
-            return new Plain();
-        } else if ("json".equals(format)) {
-            return new Json();
-        } else {
-            throw new IllegalArgumentException();
+        if (format == null) {
+            format = "";
         }
+        return switch (format) {
+            case "", "stylish" -> new Stylish();
+            case "plain" -> new Plain();
+            case "json" -> new Json();
+            default ->
+                throw new IllegalArgumentException("Неизвестный формат");
+        };
     }
 }
