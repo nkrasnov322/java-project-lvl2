@@ -1,23 +1,32 @@
 package hexlet.code;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.TreeSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeMap;
-
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 
 
 public class Differ {
+
     public static String generate(String file1, String file2) throws Exception {
         return generate(file1, file2, "stylish");
     }
 
+    private static String fileExtension(String fileName) throws Exception {
+        int indexDot = fileName.lastIndexOf(".");
+        if (indexDot == -1) {
+            throw new Exception("Файл без расширения");
+        }
+        return fileName.substring(indexDot + 1);
+    }
+
+    private static String textOfFile(String file1) throws IOException {
+        return Files.readString(Path.of(file1));
+    }
+
     public static String generate(String file1, String file2, String format) throws Exception {
-        Map<String, Object> map1 = Parser.parse(file1);
-        Map<String, Object> map2 = Parser.parse(file2);
+        Map<String, Object> map1 = Parser.parse(textOfFile(file1), fileExtension(file1));
+        Map<String, Object> map2 = Parser.parse(textOfFile(file2), fileExtension(file2));
 
         Set<String> keys = new TreeSet<>(map1.keySet());
         keys.addAll(map2.keySet());
@@ -29,16 +38,15 @@ public class Differ {
             Object value2 = map2.get(key);
             boolean isValue1 = map1.containsKey(key);
             boolean isValue2 = map2.containsKey(key);
-            boolean isValuesEqualsNull = (value1 == null && value2 == null);
 
             Map<String, Object> resultMap = new HashMap<>();
-            if (!isValue1 && isValue2) {
+            if (!isValue1) {
                 resultMap.put("added", value2);
-            } else if (isValue1 && !isValue2) {
+            } else if (!isValue2) {
                 resultMap.put("removed", value1);
-            } else if (isValuesEqualsNull || (value1 != null && value1.equals(value2))) {
+            } else if (Objects.equals(value1, value2)) {
                 resultMap = Map.of("equals", value2);
-            } else if (isValue1 && isValue2) {
+            } else {
                 resultMap = Map.of("changed", listOfTwoElements(value1, value2));
             }
             result.put(key, resultMap);

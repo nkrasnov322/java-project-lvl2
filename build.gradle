@@ -40,8 +40,6 @@ jacocoTestReport {
     }
 }
 
-
-
 dependencies {
     implementation 'info.picocli:picocli:4.6.2'
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind

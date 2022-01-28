@@ -10,28 +10,18 @@ import java.util.Map;
 
 public class Parser {
 
-    private static ObjectMapper mapperForExtension(String fileExtension) throws Exception {
-        if ("json".equals(fileExtension)) {
-            return new ObjectMapper();
-        } else if ("yaml".equals(fileExtension) || "yml".equals(fileExtension)) {
-            return new ObjectMapper(new YAMLFactory());
-        } else {
-            throw new Exception();
-        }
+    private static ObjectMapper mapperForFileFormat(String fileExtension) throws Exception {
+        return switch (fileExtension) {
+            case "json" -> new ObjectMapper();
+            case "yaml", "yml" -> new ObjectMapper(new YAMLFactory());
+            default -> throw new Exception("Неизвестный формат файлов");
+        };
     }
 
-    public static Map<String, Object> parse(String fileName) throws Exception {
+    public static Map<String, Object> parse(String text, String format) throws Exception {
         var type = new TypeReference<HashMap<String, Object>>() { };
-        ObjectMapper mapper = mapperForExtension(fileExtension(fileName));
-        return mapper.readValue(new File(fileName), type);
-    }
-
-    private static String fileExtension(String fileName) throws Exception {
-        int indexDot = fileName.lastIndexOf(".");
-        if (indexDot == -1) {
-            throw new Exception();
-        }
-        return fileName.substring(indexDot + 1);
+        ObjectMapper mapper = mapperForFileFormat(format);
+        return mapper.readValue(text, type);
     }
 
 }
