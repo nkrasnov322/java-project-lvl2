@@ -5,7 +5,7 @@ import java.util.Map;
 
 public final class Stylish extends Format {
 
-    public String format(Map<String, Map<String, Object>> diffResults) {
+    public String format(List<Map<String, Object>> diffResults) {
         return wrapTheStringDiffs(stringDiffResults(diffResults));
     }
 
@@ -13,31 +13,38 @@ public final class Stylish extends Format {
         return "{\n" + stringDiffResults + "}";
     }
 
-    private String diffRepresentation(String key, String operation, Object value) {
-        if ("changed".equals(operation)) {
-            List listValue = (List) value;
-            String removedDiff = diffRepresentation(key, "removed", listValue.get(0));
-            String addedDiff = diffRepresentation(key, "added", listValue.get(1));
+    private String diffRepresentation(String fieldName, String status, Object value1, Object value2) {
+        if ("changed".equals(status)) {
+            String removedDiff = diffRepresentation(fieldName, "removed", value1, null);
+            String addedDiff = diffRepresentation(fieldName, "added", null, value2);
             return  removedDiff + addedDiff;
         }
+        Object value;
         String result;
-        if ("added".equals(operation)) {
-            result = "+";
-        } else if ("removed".equals(operation)) {
-            result = "-";
-        } else {
-            result = " ";
+        switch (status) {
+            case "added":
+                result = "+";
+                value = value2;
+                break;
+            case "removed":
+                result = "-";
+                value = value1;
+                break;
+            default:
+                result = " ";
+                value = value2;
         }
-        return "  " + result + " " + key + ": " +  value + "\n";
+        return "  " + result + " " + fieldName + ": " +  value + "\n";
     }
 
-    private String stringDiffResults(Map<String, Map<String, Object>> diffResults) {
+    private String stringDiffResults(List<Map<String, Object>> diffResults) {
         String result = "";
-        for (Map.Entry<String, Map<String, Object>> keyEntry: diffResults.entrySet()) {
-            String key = keyEntry.getKey();
-            for (Map.Entry<String, Object> diffEntry: keyEntry.getValue().entrySet()) {
-                result += diffRepresentation(key, diffEntry.getKey(), diffEntry.getValue());
-            }
+        for (Map<String, Object> diff: diffResults) {
+            String status = (String) diff.get("status");
+            String fieldName = (String) diff.get("fieldName");
+            Object value1 = diff.get("value1");
+            Object value2 = diff.get("value2");
+            result += diffRepresentation(fieldName, status, value1, value2);
         }
         return result;
     }

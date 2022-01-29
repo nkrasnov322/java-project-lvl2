@@ -9,26 +9,18 @@ import java.util.stream.Collectors;
 public final class Plain extends Format {
 
     @Override
-    public String format(Map<String, Map<String, Object>> diffResults) {
+    public String format(List<Map<String, Object>> diffResults) {
         return stringDiffResults(diffResults);
     }
 
-    private String diffRepresentation(String key, String operation, Object value) {
-        if ("changed".equals(operation)) {
-
-            Object value1 = ((List) value).get(0);
-            Object value2 = ((List) value).get(1);
-
-            return "Property '" + key + "' was updated. From "
-                                + checkComplexValue(value1) + " to " + checkComplexValue(value2);
-        }
-        if ("added".equals(operation)) {
-            return "Property '" + key + "' was added with value: " + checkComplexValue(value);
-        } else if ("removed".equals(operation)) {
-            return "Property '" + key + "' was removed";
-        } else {
-            return "";
-        }
+    private String diffRepresentation(String fieldName, String status, Object value1, Object value2) {
+        return switch (status) {
+            case "changed" -> "Property '" + fieldName + "' was updated. From "
+                    + checkComplexValue(value1) + " to " + checkComplexValue(value2);
+            case "added" -> "Property '" + fieldName + "' was added with value: " + checkComplexValue(value2);
+            case "removed" -> "Property '" + fieldName + "' was removed";
+            default -> "";
+        };
     }
 
     private String checkComplexValue(Object value) {
@@ -47,19 +39,19 @@ public final class Plain extends Format {
         return String.valueOf(value);
     }
 
-    private String stringDiffResults(Map<String, Map<String, Object>> diffResults) {
+    private String stringDiffResults(List<Map<String, Object>> diffResults) {
         List<String> results = new ArrayList<>();
-        for (Map.Entry<String, Map<String, Object>> keyEntry: diffResults.entrySet()) {
-            String key = keyEntry.getKey();
-            for (Map.Entry<String, Object> diffEntry: keyEntry.getValue().entrySet()) {
-                String result =  diffRepresentation(key, diffEntry.getKey(), diffEntry.getValue());
-                if (result.isEmpty()) {
-                    continue;
-                }
-                results.add(result);
+        for (Map<String, Object> diff: diffResults) {
+            String status = (String) diff.get("status");
+            String fieldName = (String) diff.get("fieldName");
+            Object value1 = diff.get("value1");
+            Object value2 = diff.get("value2");
+            String result =  diffRepresentation(fieldName, status, value1, value2);
+            if (result.isEmpty()) {
+                continue;
             }
+            results.add(result);
         }
-
         return results.stream()
                 .collect(Collectors.joining("\n"));
     }

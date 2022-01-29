@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 
@@ -37,8 +36,7 @@ public class Differ {
 
         Set<String> keys = new TreeSet<>(map1.keySet());
         keys.addAll(map2.keySet());
-
-        Map<String, Map<String, Object>> result = new TreeMap<>();
+        List<Map<String, Object>> result = new ArrayList<>();
         for (String key : keys) {
 
             Object value1 = map1.get(key);
@@ -46,17 +44,22 @@ public class Differ {
             boolean isValue1 = map1.containsKey(key);
             boolean isValue2 = map2.containsKey(key);
 
-            Map<String, Object> resultMap = new HashMap<>();
+            String status;
             if (!isValue1) {
-                resultMap.put("added", value2);
+                status = "added";
             } else if (!isValue2) {
-                resultMap.put("removed", value1);
+                status = "removed";
             } else if (Objects.equals(value1, value2)) {
-                resultMap = Map.of("equals", value2);
+                status = "equals";
             } else {
-                resultMap = Map.of("changed", listOfTwoElements(value1, value2));
+                status = "changed";
             }
-            result.put(key, resultMap);
+            Map<String, Object> diffMap = new HashMap<>();
+            diffMap.put("fieldName", key);
+            diffMap.put("status", status);
+            diffMap.put("value1", value1);
+            diffMap.put("value2", value2);
+            result.add(diffMap);
         }
         return Formatter.format(result, format);
     }
