@@ -16,14 +16,14 @@ public final class Plain extends Format {
     private String diffRepresentation(String fieldName, String status, Object value1, Object value2) {
         return switch (status) {
             case "changed" -> "Property '" + fieldName + "' was updated. From "
-                    + checkComplexValue(value1) + " to " + checkComplexValue(value2);
-            case "added" -> "Property '" + fieldName + "' was added with value: " + checkComplexValue(value2);
+                    + stringifyComplexValue(value1) + " to " + stringifyComplexValue(value2);
+            case "added" -> "Property '" + fieldName + "' was added with value: " + stringifyComplexValue(value2);
             case "removed" -> "Property '" + fieldName + "' was removed";
             default -> "";
         };
     }
 
-    private String checkComplexValue(Object value) {
+    private String stringifyComplexValue(Object value) {
         if (value == null) {
             return "null";
         }
